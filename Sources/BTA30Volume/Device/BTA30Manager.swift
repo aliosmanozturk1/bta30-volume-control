@@ -18,6 +18,8 @@ final class BTA30Manager: ObservableObject {
     }
 
     static let maxVolume = 60
+    /// Lowest selectable value for the volume limit.
+    static let minVolumeLimit = 10
 
     /// Ignore device volume/balance pushes this soon after a local change
     /// (they are echoes of our own writes and would make the slider jump).
@@ -35,6 +37,15 @@ final class BTA30Manager: ObservableObject {
     @Published private(set) var upsampling: Bool = false
     @Published private(set) var bootMode: Bool = false
     @Published private(set) var firmwareVersion: String = ""
+    /// The highest volume the app allows (hearing safety). 60 = unlimited.
+    @Published var volumeLimit: Int {
+        didSet {
+            defaults.set(volumeLimit, forKey: Preferences.volumeLimit)
+            if isConnected && volume > volumeLimit {
+                setVolume(volumeLimit)
+            }
+        }
+    }
 
     var isConnected: Bool { state == .connected }
 
@@ -70,6 +81,8 @@ final class BTA30Manager: ObservableObject {
         self.resyncWriter = resyncWriter
         self.now = now
         self.retryScheduler = retryScheduler
+        let savedLimit = defaults.integer(forKey: Preferences.volumeLimit)
+        volumeLimit = (Self.minVolumeLimit...Self.maxVolume).contains(savedLimit) ? savedLimit : Self.maxVolume
         central?.events = self
     }
 
@@ -85,7 +98,7 @@ final class BTA30Manager: ObservableObject {
     ///    above `volumeLimit`, no matter the source (IR remote included).
     func setVolume(_ value: Int) {
         guard isConnected else { return }
-        let clamped = max(0, min(Self.maxVolume, value))
+        let clamped = max(0, min(volumeLimit, value))
         guard clamped != volume || volumeWriter.hasPending else { return }
         volume = clamped
         lastLocalChangeDate = now()
@@ -124,7 +137,12 @@ final class BTA30Manager: ObservableObject {
             guard let value = payload.first else { return }
             if now().timeIntervalSince(lastLocalChangeDate) > Self.remoteEchoWindow {
                 let incoming = Int(value)
+                if incoming > volumeLimit {
+                    // The limit applies regardless of source (IR remote included)
+                    setVolume(volumeLimit)
+                } else {
                     volume = incoming
+                }
             }
         case .getLedMode:
             guard let value = payload.first else { return }
