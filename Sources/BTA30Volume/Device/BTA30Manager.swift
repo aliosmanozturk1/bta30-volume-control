@@ -126,6 +126,46 @@ final class BTA30Manager: ObservableObject {
         }
     }
 
+    func setLedOff(_ off: Bool) {
+        guard isConnected else { return }
+        ledOff = off
+        send(.setLedMode, payload: [off ? 0x00 : 0x01])
+    }
+
+    func setFilter(_ index: Int) {
+        guard isConnected, (0...3).contains(index) else { return }
+        filter = index
+        send(.setFilter, payload: [UInt8(index)])
+    }
+
+    func setBalance(_ value: Int) {
+        guard isConnected else { return }
+        let clamped = max(-12, min(12, value))
+        balance = clamped
+        lastBalanceChangeDate = now()
+        balanceWriter.send { [weak self] in
+            guard let self else { return }
+            let v = self.balance
+            self.send(.setBalance, payload: [v < 0 ? 0x01 : 0x02, UInt8(abs(v))])
+        }
+    }
+
+    func setUpsampling(_ on: Bool) {
+        guard isConnected else { return }
+        upsampling = on
+        send(.setUpsampling, payload: [on ? 0x01 : 0x00])
+    }
+
+    func setBootMode(_ on: Bool) {
+        guard isConnected else { return }
+        bootMode = on
+        send(.setBootMode, payload: [on ? 0x01 : 0x00])
+    }
+
+    func powerOff() {
+        guard isConnected else { return }
+        send(.powerOff)
+    }
 
     // MARK: - GAIA send/receive
 
