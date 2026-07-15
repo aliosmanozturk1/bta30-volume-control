@@ -55,4 +55,30 @@ final class AppModel: ObservableObject {
     private func showHUD() {
         hud.show(volume: bta.volume, maxVolume: bta.volumeLimit, deviceName: bta.deviceName)
     }
+
+    // MARK: - Presets
+
+    /// Saves the current device settings under the given name; overwrites on name match.
+    func saveCurrentAsPreset(named rawName: String) {
+        let name = rawName.trimmingCharacters(in: .whitespaces)
+        guard !name.isEmpty, bta.isConnected else { return }
+        presetStore.saveOrUpdate(Preset(
+            name: name,
+            volume: bta.volume,
+            filter: bta.filter,
+            ledOff: bta.ledOff,
+            balance: bta.balance,
+            upsampling: bta.upsampling
+        ))
+    }
+
+    func apply(_ preset: Preset) {
+        guard bta.isConnected else { return }
+        bta.setVolume(preset.volume)
+        bta.setFilter(preset.filter)
+        bta.setLedOff(preset.ledOff)
+        bta.setBalance(preset.balance)
+        bta.setUpsampling(preset.upsampling)
+        showHUD()
+    }
 }
