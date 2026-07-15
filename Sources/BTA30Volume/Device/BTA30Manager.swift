@@ -24,6 +24,8 @@ final class BTA30Manager: ObservableObject {
     /// Ignore device volume/balance pushes this soon after a local change
     /// (they are echoes of our own writes and would make the slider jump).
     private static let remoteEchoWindow: TimeInterval = 0.5
+    /// Volume restored when unmuting with no remembered level.
+    private static let unmuteFallbackVolume = 20
     /// Delay before retrying discovery after a failed connect.
     private static let connectRetryDelay: TimeInterval = 2
 
@@ -62,6 +64,7 @@ final class BTA30Manager: ObservableObject {
 
     private var lastLocalChangeDate = Date.distantPast
     private var lastBalanceChangeDate = Date.distantPast
+    private var preMuteVolume: Int?
 
     init(
         central: BLECentralControlling? = CoreBluetoothCentral(),
@@ -102,6 +105,7 @@ final class BTA30Manager: ObservableObject {
         guard clamped != volume || volumeWriter.hasPending else { return }
         volume = clamped
         lastLocalChangeDate = now()
+        if clamped > 0 { preMuteVolume = nil }
         volumeWriter.send { [weak self] in
             guard let self else { return }
             self.send(.setVolume, payload: [UInt8(self.volume)])
@@ -112,6 +116,15 @@ final class BTA30Manager: ObservableObject {
         setVolume(volume + delta)
     }
 
+    func toggleMute() {
+        if volume > 0 {
+            preMuteVolume = volume
+            setVolume(0)
+        } else {
+            setVolume(preMuteVolume ?? Self.unmuteFallbackVolume)
+            preMuteVolume = nil
+        }
+    }
 
 
     // MARK: - GAIA send/receive
@@ -142,6 +155,7 @@ final class BTA30Manager: ObservableObject {
                     setVolume(volumeLimit)
                 } else {
                     volume = incoming
+                    if volume > 0 { preMuteVolume = nil }
                 }
             }
         case .getLedMode:
