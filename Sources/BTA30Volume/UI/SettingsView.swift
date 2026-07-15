@@ -52,6 +52,7 @@ struct SettingsView: View {
             SectionCard(title: L("KEYBOARD")) { keyboardSettings }
             SectionCard(title: L("DEVICE")) { deviceSettings }
             SectionCard(title: L("PRESETS")) { presetSettings }
+            SectionCard(title: L("APP")) { appSettings }
         }
         .padding(14)
     }
@@ -224,5 +225,39 @@ struct SettingsView: View {
     private func savePreset() {
         model.saveCurrentAsPreset(named: newPresetName)
         newPresetName = ""
+    }
+
+    @ViewBuilder private var appSettings: some View {
+        HStack {
+            VStack(alignment: .leading, spacing: 1) {
+                Text(L("Volume limit"))
+                Text(L("No source can go above this level"))
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+            Spacer()
+            Stepper(value: $bta.volumeLimit, in: BTA30Manager.minVolumeLimit...BTA30Manager.maxVolume, step: 5) {
+                Text("\(bta.volumeLimit)")
+                    .font(.system(.body, design: .monospaced))
+                    .frame(width: 24, alignment: .trailing)
+            }
+            .controlSize(.small)
+        }
+
+        ToggleRow(
+            title: L("Scroll to adjust volume"),
+            subtitle: L("Turn the volume by scrolling over the menu bar icon"),
+            isOn: $model.scrollAdjustsVolume
+        )
+
+        ToggleRow(
+            title: L("Launch at login"),
+            subtitle: L("Ready in the menu bar when your Mac starts"),
+            isOn: $loginItem.isEnabled
+        )
+
+        if let hint = loginItem.hint {
+            Caption(hint)
+        }
     }
 }
