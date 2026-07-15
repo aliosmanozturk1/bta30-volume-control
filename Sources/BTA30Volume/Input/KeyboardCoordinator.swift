@@ -29,6 +29,7 @@ final class KeyboardCoordinator: ObservableObject {
         didSet {
             guard oldValue != hotKeysEnabled else { return }
             defaults.set(hotKeysEnabled, forKey: Preferences.hotKeysEnabled)
+            if !hotKeysEnabled { endRecording() }
             applyHotKeys()
         }
     }
@@ -41,8 +42,11 @@ final class KeyboardCoordinator: ObservableObject {
         }
     }
     /// The action whose shortcut is being recorded (nil = not recording)
+    @Published var recordingAction: HotKeyAction?
     @Published var permissionHint: String?
+    @Published var hotKeyHint: String?
 
+    private static let escapeKeyCode: UInt16 = 53
     /// Valid media key step sizes.
     private static let keyStepRange = 1...3
     /// Polling cadence while waiting for the Accessibility grant.
@@ -55,6 +59,7 @@ final class KeyboardCoordinator: ObservableObject {
 
     private var trustPollTimer: Timer?
     private var didPromptForAccessibility = false
+    private var recordMonitor: Any?
 
     init(defaults: UserDefaults = .standard) {
         self.defaults = defaults
@@ -90,16 +95,66 @@ final class KeyboardCoordinator: ObservableObject {
         applyHotKeys()
     }
 
+    // MARK: - Shortcut recording
 
+    func beginRecording(_ action: HotKeyAction) {
+        endRecording()
+        recordingAction = action
+        hotKeyHint = nil
+        applyHotKeys() // don't let our own hotkeys swallow keys while recording
 
+        recordMonitor = NSEvent.addLocalMonitorForEvents(matching: .keyDown) { [weak self] event in
+            guard let self else { return event }
+            return self.handleRecordingKeyDown(event)
+        }
+    }
+
+    /// Consumes key-downs during a recording session. Returns nil to swallow
+    /// the event, or the event itself to pass it through untouched.
+    /// Internal (not private) so tests can drive it with synthetic events.
+    func handleRecordingKeyDown(_ event: NSEvent) -> NSEvent? {
+        guard let action = recordingAction else { return event }
+        let modifiers = event.modifierFlags.intersection([.command, .option, .control, .shift])
+
+        // Cancel with ⎋
+        if event.keyCode == Self.escapeKeyCode, modifiers.isEmpty {
+            endRecording()
+            return nil
+        }
+        // Reject bare keys: require at least ⌘/⌥/⌃
+        guard !modifiers.intersection([.command, .option, .control]).isEmpty else {
+            hotKeyHint = L("Shortcut must include at least ⌘, ⌥ or ⌃.")
+            return nil
+        }
+        let spec = HotKeySpec(keyCode: UInt32(event.keyCode), modifierFlags: modifiers.rawValue)
+        if hotKeyBindings.contains(where: { $0.key != action && $0.value == spec }) {
+            hotKeyHint = L("\(spec.displayString) is already assigned to another action.")
+            return nil
+        }
+        hotKeyBindings[action] = spec
+        endRecording()
+        return nil
+    }
+
+    func endRecording() {
+        if let monitor = recordMonitor {
+            NSEvent.removeMonitor(monitor)
+            recordMonitor = nil
+        }
+        guard recordingAction != nil else { return }
+        recordingAction = nil
+        hotKeyHint = nil
+        applyHotKeys()
+    }
 
     func resetHotKeys() {
+        endRecording()
         hotKeyBindings = HotKeyAction.defaultBindings
     }
 
     private func applyHotKeys() {
         hotKeys.stop()
-        if hotKeysEnabled {
+        if hotKeysEnabled && recordingAction == nil {
             hotKeys.start(bindings: hotKeyBindings)
         }
     }
