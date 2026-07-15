@@ -17,6 +17,14 @@ final class BTA30Manager: ObservableObject {
         case connected
     }
 
+    /// A user-visible problem. Cleared automatically as soon as the device
+    /// shows signs of health again (successful connect or inbound response),
+    /// so the UI never shows a stale warning.
+    enum Issue: Equatable {
+        case writeFailed
+        case connectFailed
+    }
+
     static let maxVolume = 60
     /// Lowest selectable value for the volume limit.
     static let minVolumeLimit = 10
@@ -39,6 +47,7 @@ final class BTA30Manager: ObservableObject {
     @Published private(set) var upsampling: Bool = false
     @Published private(set) var bootMode: Bool = false
     @Published private(set) var firmwareVersion: String = ""
+    @Published private(set) var lastIssue: Issue?
     /// The highest volume the app allows (hearing safety). 60 = unlimited.
     @Published var volumeLimit: Int {
         didSet {
@@ -264,9 +273,11 @@ extension BTA30Manager: BLECentralEvents {
     func centralConnected(_ peripheral: BLEPeripheralHandle) {
         deviceName = peripheral.peripheralName ?? "FiiO BTA30 Pro"
         defaults.set(peripheral.id.uuidString, forKey: Preferences.peripheralIdentifier)
+        lastIssue = nil
     }
 
     func centralFailedToConnect() {
+        lastIssue = .connectFailed
         retryScheduler(Self.connectRetryDelay) { [weak self] in
             guard let self, self.central?.isPoweredOn == true, !self.isConnected else { return }
             self.startSearching()
@@ -284,11 +295,14 @@ extension BTA30Manager: BLECentralEvents {
     func transportDidConnect(_ transport: GAIATransport) {
         self.transport = transport
         state = .connected
+        lastIssue = nil
         requestDeviceState()
     }
 
     func receive(_ data: Data) {
         guard let response = GAIA.parseResponse(data) else { return }
+        // Any valid inbound response proves the link is healthy again
+        if lastIssue != nil { lastIssue = nil }
         handle(response)
     }
 
@@ -297,6 +311,7 @@ extension BTA30Manager: BLECentralEvents {
     /// in quick succession coalesce into a single resync.
     func writeDidFail(_ error: Error) {
         logger.error("GAIA write failed: \(error.localizedDescription, privacy: .public)")
+        lastIssue = .writeFailed
         resyncWriter.send { [weak self] in
             self?.requestDeviceState()
         }
