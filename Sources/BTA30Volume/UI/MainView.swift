@@ -5,12 +5,14 @@ struct MainView: View {
     @ObservedObject var model: AppModel
     @ObservedObject var bta: BTA30Manager
     @ObservedObject var audio: AudioOutputWatcher
+    @ObservedObject var presetStore: PresetStore
     let onSettings: () -> Void
 
     init(model: AppModel, onSettings: @escaping () -> Void) {
         self.model = model
         self.bta = model.bta
         self.audio = model.audio
+        self.presetStore = model.presetStore
         self.onSettings = onSettings
     }
 
@@ -41,6 +43,9 @@ struct MainView: View {
             if bta.isConnected {
                 header
                 volumeCard
+                if !presetStore.presets.isEmpty {
+                    presetChips
+                }
             } else {
                 emptyState
             }
@@ -91,6 +96,23 @@ struct MainView: View {
         .card()
     }
 
+    private var presetChips: some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: 6) {
+                ForEach(presetStore.presets) { preset in
+                    Button {
+                        model.apply(preset)
+                    } label: {
+                        Text(preset.name)
+                    }
+                    .buttonStyle(.bordered)
+                    .controlSize(.small)
+                    .help(L("Volume \(preset.volume) · balance \(preset.balance) · LED \(preset.ledOff ? L("off") : L("on"))"))
+                }
+            }
+            .padding(.horizontal, 2)
+        }
+    }
 
     private var emptyState: some View {
         VStack(spacing: 10) {
