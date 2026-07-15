@@ -33,6 +33,15 @@ final class StatusItemController: NSObject {
             button.font = NSFont.monospacedDigitSystemFont(ofSize: NSFont.systemFontSize, weight: .regular)
         }
 
+        // The HUD anchors below the menu bar icon
+        model.hud.anchorProvider = { [weak self] in
+            guard let self, let button = self.statusItem.button, let window = button.window else { return nil }
+            return window.convertToScreen(button.convert(button.bounds, to: nil))
+        }
+        // The slider is already visible while the popover is open; no HUD needed
+        model.hud.suppressProvider = { [weak self] in
+            self?.popover.isShown == true
+        }
 
         model.bta.$state
             .combineLatest(model.bta.$volume)
