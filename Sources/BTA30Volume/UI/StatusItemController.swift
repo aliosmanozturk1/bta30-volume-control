@@ -75,9 +75,58 @@ final class StatusItemController: NSObject {
     // MARK: - Clicks and menu
 
     @objc private func statusItemClicked() {
+        if NSApp.currentEvent?.type == .rightMouseUp {
+            showContextMenu()
+        } else {
             togglePopover()
+        }
     }
 
+    private func showContextMenu() {
+        let connected = model.bta.isConnected
+        let menu = NSMenu()
+        menu.autoenablesItems = false
+
+        let muteTitle = model.bta.volume == 0 ? L("Unmute") : L("Mute")
+        let muteItem = NSMenuItem(title: muteTitle, action: #selector(menuMute), keyEquivalent: "")
+        muteItem.target = self
+        muteItem.isEnabled = connected
+        menu.addItem(muteItem)
+        menu.addItem(.separator())
+
+        if !model.presetStore.presets.isEmpty {
+            for preset in model.presetStore.presets {
+                let item = NSMenuItem(title: preset.name, action: #selector(menuApplyPreset(_:)), keyEquivalent: "")
+                item.target = self
+                item.isEnabled = connected
+                item.representedObject = preset.id.uuidString
+                item.image = NSImage(systemSymbolName: "square.stack.3d.up", accessibilityDescription: nil)
+                menu.addItem(item)
+            }
+            menu.addItem(.separator())
+        }
+        let powerItem = NSMenuItem(title: L("Power Off Device"), action: #selector(menuPowerOff), keyEquivalent: "")
+        powerItem.target = self
+        powerItem.isEnabled = connected
+        menu.addItem(powerItem)
+        menu.addItem(.separator())
+        let quitItem = NSMenuItem(title: L("Quit"), action: #selector(menuQuit), keyEquivalent: "")
+        quitItem.target = self
+        menu.addItem(quitItem)
+
+        if let button = statusItem.button {
+            menu.popUp(positioning: nil, at: NSPoint(x: 0, y: button.bounds.height + 6), in: button)
+        }
+    }
+
+    @objc private func menuMute() { model.userToggleMute() }
+    @objc private func menuApplyPreset(_ sender: NSMenuItem) {
+        guard let id = sender.representedObject as? String,
+              let preset = model.presetStore.find(id: id) else { return }
+        model.apply(preset)
+    }
+    @objc private func menuPowerOff() { model.bta.powerOff() }
+    @objc private func menuQuit() { NSApp.terminate(nil) }
 
     // MARK: - Popover
 
