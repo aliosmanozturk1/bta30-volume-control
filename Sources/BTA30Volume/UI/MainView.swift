@@ -49,11 +49,30 @@ struct MainView: View {
             } else {
                 emptyState
             }
+            if let issue = bta.lastIssue {
+                issueBanner(issue)
+            }
             bottomBar
         }
         .padding(14)
     }
 
+    private func issueBanner(_ issue: BTA30Manager.Issue) -> some View {
+        HStack(spacing: 6) {
+            Image(systemName: "exclamationmark.triangle.fill")
+                .foregroundStyle(.yellow)
+                .font(.caption)
+            Caption(issueText(issue))
+        }
+        .padding(.horizontal, 2)
+    }
+
+    private func issueText(_ issue: BTA30Manager.Issue) -> String {
+        switch issue {
+        case .writeFailed: return L("A command didn't reach the device — re-syncing…")
+        case .connectFailed: return L("Connection failed — retrying…")
+        }
+    }
 
     private var header: some View {
         HStack(spacing: 8) {
