@@ -20,6 +20,17 @@ struct SettingsView: View {
         self.onBack = onBack
     }
 
+    private var balanceBinding: Binding<Double> {
+        Binding(
+            get: { Double(bta.balance) },
+            set: { bta.setBalance(Int($0.rounded())) }
+        )
+    }
+
+    private var balanceLabel: String {
+        if bta.balance == 0 { return L("Center") }
+        return bta.balance < 0 ? "L\(-bta.balance)" : "R\(bta.balance)"
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
@@ -38,6 +49,7 @@ struct SettingsView: View {
             .padding(.horizontal, 2)
 
             SectionCard(title: L("KEYBOARD")) { keyboardSettings }
+            SectionCard(title: L("DEVICE")) { deviceSettings }
         }
         .padding(14)
     }
@@ -109,5 +121,64 @@ struct SettingsView: View {
             .buttonStyle(.link)
             .font(.caption)
         }
+    }
+
+    @ViewBuilder private var deviceSettings: some View {
+        HStack {
+            Text(L("DAC filter"))
+            Spacer()
+            Picker("", selection: bta.binding(\.filter, bta.setFilter)) {
+                Text(verbatim: "Sharp Roll-Off").tag(0)
+                Text(verbatim: "Slow Roll-Off").tag(1)
+                Text(verbatim: "Short Delay Sharp").tag(2)
+                Text(verbatim: "Short Delay Slow").tag(3)
+            }
+            .labelsHidden()
+            .frame(width: 164)
+        }
+        .disabled(!bta.isConnected)
+
+        HStack(spacing: 10) {
+            Text(L("Balance"))
+            Slider(value: balanceBinding, in: -12...12, step: 1)
+            Button(balanceLabel) {
+                bta.setBalance(0)
+            }
+            .buttonStyle(.plain)
+            .font(.system(.caption, design: .monospaced))
+            .foregroundStyle(.secondary)
+            .frame(width: 34, alignment: .trailing)
+            .help(L("Reset to center"))
+        }
+        .disabled(!bta.isConnected)
+
+        ToggleRow(
+            title: L("Upsampling"),
+            subtitle: L("Upsamples the signal to 384 kHz"),
+            isOn: bta.binding(\.upsampling, bta.setUpsampling)
+        )
+        .disabled(!bta.isConnected)
+
+        ToggleRow(
+            title: L("Turn off LEDs"),
+            subtitle: nil,
+            isOn: bta.binding(\.ledOff, bta.setLedOff)
+        )
+        .disabled(!bta.isConnected)
+
+        ToggleRow(
+            title: L("Auto power-on"),
+            subtitle: L("Device turns on when it receives power"),
+            isOn: bta.binding(\.bootMode, bta.setBootMode)
+        )
+        .disabled(!bta.isConnected)
+
+        Button {
+            bta.powerOff()
+        } label: {
+            Label(L("Power off device"), systemImage: "power")
+        }
+        .controlSize(.small)
+        .disabled(!bta.isConnected)
     }
 }
