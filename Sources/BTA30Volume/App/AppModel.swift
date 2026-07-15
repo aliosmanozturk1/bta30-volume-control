@@ -81,4 +81,37 @@ final class AppModel: ObservableObject {
         bta.setUpsampling(preset.upsampling)
         showHUD()
     }
+
+    // MARK: - URL scheme (bta30://...)
+
+    func handle(url: URL) {
+        guard let command = URLCommand.parse(url) else { return }
+        logger.notice("URL command: \(String(describing: command), privacy: .public)")
+
+        switch command {
+        case .setVolume(let value):
+            bta.setVolume(value)
+            showHUD()
+        case .volumeUp:
+            userAdjustVolume(keyboard.keyStep)
+        case .volumeDown:
+            userAdjustVolume(-keyboard.keyStep)
+        case .mute:
+            userToggleMute()
+        case .balance(let value):
+            bta.setBalance(value)
+        case .filter(let value):
+            bta.setFilter(value)
+        case .led(let off):
+            bta.setLedOff(off)
+        case .upsampling(let on):
+            bta.setUpsampling(on)
+        case .powerOff:
+            bta.powerOff()
+        case .preset(let name):
+            if let preset = presetStore.find(named: name) {
+                apply(preset)
+            }
+        }
+    }
 }
