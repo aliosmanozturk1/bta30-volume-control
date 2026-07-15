@@ -5,6 +5,8 @@ import SwiftUI
 /// The menu bar item: button state, click/scroll interactions, the right-click
 /// menu and popover presentation. Icon rendering lives in `StatusItemIcon`.
 final class StatusItemController: NSObject {
+    /// One volume step per this much accumulated scroll delta.
+    private static let scrollStepThreshold: CGFloat = 5
     /// Tolerance before force-correcting a drifted popover position.
     private static let popoverPositionTolerance: CGFloat = 2
 
@@ -13,6 +15,8 @@ final class StatusItemController: NSObject {
     private let popover: NSPopover
     private let icon = StatusItemIcon()
     private var cancellables = Set<AnyCancellable>()
+    private var scrollMonitor: Any?
+    private var scrollAccumulator: CGFloat = 0
 
     init(model: AppModel) {
         self.model = model
@@ -51,8 +55,14 @@ final class StatusItemController: NSObject {
             }
             .store(in: &cancellables)
 
+        installScrollMonitor()
     }
 
+    deinit {
+        if let scrollMonitor {
+            NSEvent.removeMonitor(scrollMonitor)
+        }
+    }
 
     // MARK: - Button appearance
 
@@ -71,6 +81,32 @@ final class StatusItemController: NSObject {
         }
     }
 
+    // MARK: - Scroll-to-adjust volume
+
+    private func installScrollMonitor() {
+        // Scrolling over the menu bar icon adjusts the volume (±1 per notch)
+        scrollMonitor = NSEvent.addLocalMonitorForEvents(matching: .scrollWheel) { [weak self] event in
+            guard let self, self.model.scrollAdjustsVolume,
+                  let button = self.statusItem.button,
+                  event.window === button.window else { return event }
+            var delta = event.scrollingDeltaY
+            if event.isDirectionInvertedFromDevice { delta = -delta }
+            self.scrollAccumulator += delta
+            var steps = 0
+            while self.scrollAccumulator >= Self.scrollStepThreshold {
+                steps += 1
+                self.scrollAccumulator -= Self.scrollStepThreshold
+            }
+            while self.scrollAccumulator <= -Self.scrollStepThreshold {
+                steps -= 1
+                self.scrollAccumulator += Self.scrollStepThreshold
+            }
+            if steps != 0 {
+                self.model.userAdjustVolume(steps)
+            }
+            return event
+        }
+    }
 
     // MARK: - Clicks and menu
 
