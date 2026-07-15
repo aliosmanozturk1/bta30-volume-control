@@ -1,0 +1,316 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "%@ is already assigned to another action." : {
+      "localizations" : {
+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "%@ zaten başka bir işleve atanmış." } }
+      }
+    },
+    "A command didn't reach the device — re-syncing…" : {
+      "localizations" : {
+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "Bir komut cihaza ulaşamadı — durum yeniden okunuyor…" } }
+      }
+    },
+    "Active output: %@ — keys currently control system volume." : {
+      "localizations" : {
+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "Aktif çıkış: %@ — tuşlar şu an sistem sesinde." } }
+      }
+    },
+    "Allow \"BTA30 Volume\" in System Settings → Privacy & Security → Accessibility. Keys will activate automatically once permission is granted." : {
+      "localizations" : {
+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "Sistem Ayarları → Gizlilik ve Güvenlik → Erişilebilirlik'te \"BTA30 Volume\"e izin verin. İzin verildiği anda tuşlar otomatik devreye girer." } }
+      }
+    },
+    "another device" : {
+      "localizations" : {
+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "başka bir aygıt" } }
+      }
+    },
+    "APP" : {
+      "localizations" : {
+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "UYGULAMA" } }
+      }
+    },
+    "Auto power-on" : {
+      "localizations" : {
+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "Otomatik açılış" } }
+      }
+    },
+    "Balance" : {
+      "localizations" : {
+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "Denge" } }
+      }
+    },
+    "Bluetooth is off" : {
+      "localizations" : {
+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "Bluetooth kapalı" } }
+      }
+    },
+    "Bluetooth permission required" : {
+      "localizations" : {
+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "Bluetooth izni gerekli" } }
+      }
+    },
+    "BTA30 not connected" : {
+      "localizations" : {
+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "BTA30 bağlı değil" } }
+      }
+    },
+    "BTA30 volume" : {
+      "localizations" : {
+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "BTA30 ses" } }
+      }
+    },
+    "Center" : {
+      "localizations" : {
+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "Orta" } }
+      }
+    },
+    "Connection failed — retrying…" : {
+      "localizations" : {
+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "Bağlantı kurulamadı — yeniden deneniyor…" } }
+      }
+    },
+    "Connecting…" : {
+      "localizations" : {
+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "Bağlanıyor…" } }
+      }
+    },
+    "Could not set login item: %@" : {
+      "localizations" : {
+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "Giriş öğesi ayarlanamadı: %@" } }
+      }
+    },
+    "DAC filter" : {
+      "localizations" : {
+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "DAC filtresi" } }
+      }
+    },
+    "Decrease volume" : {
+      "localizations" : {
+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "Sesi azalt" } }
+      }
+    },
+    "Delete preset" : {
+      "localizations" : {
+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "Preset'i sil" } }
+      }
+    },
+    "DEVICE" : {
+      "localizations" : {
+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "CİHAZ" } }
+      }
+    },
+    "Device turns on when it receives power" : {
+      "localizations" : {
+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "Güç gelince cihaz kendiliğinden açılır" } }
+      }
+    },
+    "Global shortcuts" : {
+      "localizations" : {
+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "Global kısayollar" } }
+      }
+    },
+    "Grant access in System Settings → Privacy & Security → Bluetooth." : {
+      "localizations" : {
+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "Sistem Ayarları → Gizlilik ve Güvenlik → Bluetooth'tan izin verin." } }
+      }
+    },
+    "Increase volume" : {
+      "localizations" : {
+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "Sesi artır" } }
+      }
+    },
+    "Key step" : {
+      "localizations" : {
+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "Tuş adımı" } }
+      }
+    },
+    "KEYBOARD" : {
+      "localizations" : {
+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "KLAVYE" } }
+      }
+    },
+    "Launch at login" : {
+      "localizations" : {
+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "Girişte başlat" } }
+      }
+    },
+    "Looking for FiiO BTA30 Pro…" : {
+      "localizations" : {
+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "FiiO BTA30 Pro aranıyor…" } }
+      }
+    },
+    "Make sure the device is powered on and the FiiO Control app on your phone is not connected." : {
+      "localizations" : {
+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "Cihazın açık olduğundan ve telefondaki FiiO Control uygulamasının bağlı olmadığından emin olun." } }
+      }
+    },
+    "Media keys" : {
+      "localizations" : {
+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "Medya tuşları" } }
+      }
+    },
+    "Mute" : {
+      "localizations" : {
+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "Sessize al" } }
+      }
+    },
+    "Mute / unmute" : {
+      "localizations" : {
+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "Sessize al / geri aç" } }
+      }
+    },
+    "New preset name" : {
+      "localizations" : {
+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "Yeni preset adı" } }
+      }
+    },
+    "No source can go above this level" : {
+      "localizations" : {
+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "Hiçbir kaynak bu seviyenin üstüne çıkamaz" } }
+      }
+    },
+    "off" : {
+      "localizations" : {
+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "kapalı" } }
+      }
+    },
+    "on" : {
+      "localizations" : {
+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "açık" } }
+      }
+    },
+    "Permission appears granted but key capture could not start. Quit and reopen the app." : {
+      "localizations" : {
+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "İzin verilmiş görünüyor ama tuş yakalama başlatılamadı. Uygulamayı kapatıp yeniden açın." } }
+      }
+    },
+    "Power off device" : {
+      "localizations" : {
+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "Cihazı kapat" } }
+      }
+    },
+    "Power Off Device" : {
+      "localizations" : {
+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "Cihazı Kapat" } }
+      }
+    },
+    "Press keys… ⎋" : {
+      "localizations" : {
+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "Tuş bekleniyor… ⎋" } }
+      }
+    },
+    "PRESETS" : {
+      "localizations" : {
+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "PRESET" } }
+      }
+    },
+    "Quit" : {
+      "localizations" : {
+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "Çıkış" } }
+      }
+    },
+    "Ready in the menu bar when your Mac starts" : {
+      "localizations" : {
+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "Mac açılınca menü çubuğunda hazır olur" } }
+      }
+    },
+    "Reset to center" : {
+      "localizations" : {
+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "Ortaya sıfırla" } }
+      }
+    },
+    "Restore defaults" : {
+      "localizations" : {
+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "Varsayılanlara dön" } }
+      }
+    },
+    "Save" : {
+      "localizations" : {
+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "Kaydet" } }
+      }
+    },
+    "Save the current device settings (volume, filter, balance, LED, upsampling) under a name, then apply them with one click from the main screen." : {
+      "localizations" : {
+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "Mevcut cihaz ayarlarını (ses, filtre, denge, LED, upsampling) isimle kaydedin; ana ekrandan tek tıkla uygulayın." } }
+      }
+    },
+    "Saves the current settings under this name" : {
+      "localizations" : {
+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "Mevcut ayarları bu adla saklar" } }
+      }
+    },
+    "Scroll to adjust volume" : {
+      "localizations" : {
+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "Scroll ile ses ayarı" } }
+      }
+    },
+    "Settings" : {
+      "localizations" : {
+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "Ayarlar" } }
+      }
+    },
+    "Shortcut must include at least ⌘, ⌥ or ⌃." : {
+      "localizations" : {
+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "Kısayol en az ⌘, ⌥ veya ⌃ içermeli." } }
+      }
+    },
+    "Space" : {
+      "localizations" : {
+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "Boşluk" } }
+      }
+    },
+    "Turn off LEDs" : {
+      "localizations" : {
+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "LED'leri kapat" } }
+      }
+    },
+    "Turn the volume by scrolling over the menu bar icon" : {
+      "localizations" : {
+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "Menü çubuğu simgesinin üzerinde kaydırınca ses değişir" } }
+      }
+    },
+    "Turn on Bluetooth from Control Center." : {
+      "localizations" : {
+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "Denetim Merkezi'nden Bluetooth'u açın." } }
+      }
+    },
+    "Unmute" : {
+      "localizations" : {
+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "Sesi aç" } }
+      }
+    },
+    "Upsampling" : {
+      "localizations" : {
+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "Upsampling" } }
+      }
+    },
+    "Upsamples the signal to 384 kHz" : {
+      "localizations" : {
+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "Sinyali 384 kHz'e yükseltir" } }
+      }
+    },
+    "Volume %lld · balance %lld · LED %@" : {
+      "localizations" : {
+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "Ses %1$lld · denge %2$lld · LED %3$@" } }
+      }
+    },
+    "Volume keys control the device while FiiO is the active output" : {
+      "localizations" : {
+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "Ses tuşları, FiiO aktif çıkışken cihazı kontrol eder" } }
+      }
+    },
+    "Volume limit" : {
+      "localizations" : {
+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "Ses limiti" } }
+      }
+    },
+    "Work in every app, no permission needed" : {
+      "localizations" : {
+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "Her uygulamada çalışır, izin gerektirmez" } }
+      }
+    }
+  },
+  "version" : "1.0"
+}
