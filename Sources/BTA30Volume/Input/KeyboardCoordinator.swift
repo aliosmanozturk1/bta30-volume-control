@@ -25,6 +25,21 @@ final class KeyboardCoordinator: ObservableObject {
     @Published var keyStep: Int {
         didSet { defaults.set(keyStep, forKey: Preferences.keyStep) }
     }
+    @Published var hotKeysEnabled: Bool {
+        didSet {
+            guard oldValue != hotKeysEnabled else { return }
+            defaults.set(hotKeysEnabled, forKey: Preferences.hotKeysEnabled)
+            applyHotKeys()
+        }
+    }
+    @Published var hotKeyBindings: [HotKeyAction: HotKeySpec] {
+        didSet {
+            if let data = try? JSONEncoder().encode(hotKeyBindings) {
+                defaults.set(data, forKey: Preferences.hotKeyBindings)
+            }
+            applyHotKeys()
+        }
+    }
     /// The action whose shortcut is being recorded (nil = not recording)
     @Published var permissionHint: String?
 
@@ -34,6 +49,7 @@ final class KeyboardCoordinator: ObservableObject {
     private static let trustPollInterval: TimeInterval = 1.5
 
     private let mediaKeyTap = MediaKeyTap()
+    private let hotKeys = HotKeyManager()
     private let defaults: UserDefaults
     private let logger = Logger(category: "keyboard")
 
@@ -45,6 +61,13 @@ final class KeyboardCoordinator: ObservableObject {
         mediaKeysEnabled = defaults.bool(forKey: Preferences.mediaKeysEnabled)
         let savedStep = defaults.integer(forKey: Preferences.keyStep)
         keyStep = Self.keyStepRange.contains(savedStep) ? savedStep : 2
+        hotKeysEnabled = defaults.bool(forKey: Preferences.hotKeysEnabled)
+        var bindings = HotKeyAction.defaultBindings
+        if let data = defaults.data(forKey: Preferences.hotKeyBindings),
+           let saved = try? JSONDecoder().decode([HotKeyAction: HotKeySpec].self, from: data) {
+            bindings.merge(saved) { _, savedSpec in savedSpec }
+        }
+        hotKeyBindings = bindings
 
         mediaKeyTap.shouldCapture = { [weak self] in
             self?.shouldCaptureMediaKeys?() == true
@@ -57,16 +80,29 @@ final class KeyboardCoordinator: ObservableObject {
             case .mute: self.onAction?(.mute)
             }
         }
+        hotKeys.onAction = { [weak self] action in
+            self?.onAction?(action)
+        }
 
         if mediaKeysEnabled {
             applyMediaKeySetting()
         }
+        applyHotKeys()
     }
 
 
 
 
+    func resetHotKeys() {
+        hotKeyBindings = HotKeyAction.defaultBindings
+    }
 
+    private func applyHotKeys() {
+        hotKeys.stop()
+        if hotKeysEnabled {
+            hotKeys.start(bindings: hotKeyBindings)
+        }
+    }
 
     // MARK: - Media keys
 
