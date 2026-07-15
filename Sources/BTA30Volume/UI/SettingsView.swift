@@ -9,6 +9,7 @@ struct SettingsView: View {
     @ObservedObject var presetStore: PresetStore
     @ObservedObject var loginItem: LoginItemManager
     let onBack: () -> Void
+    @State private var newPresetName = ""
 
     init(model: AppModel, onBack: @escaping () -> Void) {
         self.model = model
@@ -50,6 +51,7 @@ struct SettingsView: View {
 
             SectionCard(title: L("KEYBOARD")) { keyboardSettings }
             SectionCard(title: L("DEVICE")) { deviceSettings }
+            SectionCard(title: L("PRESETS")) { presetSettings }
         }
         .padding(14)
     }
@@ -180,5 +182,47 @@ struct SettingsView: View {
         }
         .controlSize(.small)
         .disabled(!bta.isConnected)
+    }
+
+    @ViewBuilder private var presetSettings: some View {
+        if presetStore.presets.isEmpty {
+            Caption(L("Save the current device settings (volume, filter, balance, LED, upsampling) under a name, then apply them with one click from the main screen."))
+        }
+
+        ForEach(presetStore.presets) { preset in
+            HStack(spacing: 6) {
+                Image(systemName: "square.stack.3d.up")
+                    .foregroundStyle(.secondary)
+                Text(preset.name)
+                Spacer()
+                Text("\(preset.volume)")
+                    .font(.system(.caption, design: .monospaced))
+                    .foregroundStyle(.secondary)
+                Button {
+                    presetStore.delete(preset)
+                } label: {
+                    Image(systemName: "xmark.circle.fill")
+                        .foregroundStyle(.tertiary)
+                }
+                .buttonStyle(.plain)
+                .help(L("Delete preset"))
+            }
+        }
+
+        HStack {
+            TextField(L("New preset name"), text: $newPresetName)
+                .textFieldStyle(.roundedBorder)
+                .controlSize(.small)
+                .onSubmit { savePreset() }
+            Button(L("Save")) { savePreset() }
+                .controlSize(.small)
+                .disabled(!bta.isConnected || newPresetName.trimmingCharacters(in: .whitespaces).isEmpty)
+                .help(L("Saves the current settings under this name"))
+        }
+    }
+
+    private func savePreset() {
+        model.saveCurrentAsPreset(named: newPresetName)
+        newPresetName = ""
     }
 }
