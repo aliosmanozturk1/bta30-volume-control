@@ -93,6 +93,10 @@ Bilinmesi gereken iki tuhaflık:
 
 - BLE protokolünün reverse engineering'i: [Hypfer/fiio-bta30-protocol](https://github.com/Hypfer/fiio-bta30-protocol) — bu proje protokolü BTA30 Pro üzerinde bayt bayt doğruladı.
 
+## Sorumluluk Reddi
+
+Bu bağımsız ve gayriresmî bir projedir; FiiO ile bağlantılı, onun tarafından yetkilendirilmiş ya da onaylanmış değildir. "FiiO", "BTA30" ve diğer ürün adları ilgili sahiplerinin ticari markalarıdır ve burada yalnızca uyumluluğu belirtmek için kullanılmıştır. Kendi riskinizle kullanın.
+
 ## Lisans
 
 [MIT](LICENSE)

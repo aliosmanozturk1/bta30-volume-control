@@ -101,6 +101,10 @@ Two quirks worth knowing:
 
 - BLE protocol reverse engineering: [Hypfer/fiio-bta30-protocol](https://github.com/Hypfer/fiio-bta30-protocol) — this project verified it byte-for-byte on the BTA30 Pro.
 
+## Disclaimer
+
+This is an independent, unofficial project. It is not affiliated with, authorized, or endorsed by FiiO. "FiiO", "BTA30" and other product names are trademarks of their respective owners, used here only to describe compatibility. Use at your own risk.
+
 ## License
 
 [MIT](LICENSE)
